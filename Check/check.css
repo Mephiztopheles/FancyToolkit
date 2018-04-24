@@ -1,0 +1,34 @@
+@import "../css/fancy.css";
+
+.fancy-check .check-box {
+    border: 1px solid;
+    width: 27px;
+    height: 27px;
+    text-align: center;
+    float: left;
+}
+
+.fancy-check:not ([class^="checked-"] ):not ([class*=" checked-"] ):after {
+    content: " ";
+}
+
+.fancy-check {
+    box-sizing: border-box;
+    cursor: pointer;
+    line-height: 27px;
+}
+
+.fancy-check:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.fancy-check input[type=checkbox] {
+    display: none;
+}
+
+.fancy-check .check-label {
+    float: left;
+    margin-left: 10px;
+}

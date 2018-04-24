@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Table</title>
+
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="../../Table/table.css">
+    <style>
+        .table-cell {
+            padding: 5px;
+            border: 1px solid;
+        }
+
+        .table {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .table .selected {
+            background: #ce6b64;
+        }
+
+    </style>
+</head>
+<body>
+
+<input type="text" placeholder="Search...">
+<button>Neu</button>
+
+<table class="table"></table>
+<script src="index.js" type="module"></script>
+</body>
+</html>

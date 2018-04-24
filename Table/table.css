@@ -1,0 +1,7 @@
+.table {
+    border-collapse: collapse;
+}
+
+.table-row:nth-child(odd) {
+    background: #cecece;
+}

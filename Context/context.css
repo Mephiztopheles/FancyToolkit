@@ -1,0 +1,77 @@
+@import "../css/fancy.css";
+
+.Context-menu {
+    position: relative;
+}
+
+.Context-body {
+    left: 0;
+}
+
+.Context-body,
+.Context-menu-sub {
+    position: absolute;
+    top: 0;
+    background: rgba(28, 28, 28, 0.9);
+}
+
+.Context-menu-separator,
+.Context-menu-entry {
+    /* background: rgba(28,28,28,0.9); */
+    color: #eee;
+    line-height: 30px;
+}
+
+.Context-menu-entry {
+    cursor: pointer;
+    display: flex;
+    white-space: nowrap;
+}
+
+.Context-menu-entry-opener,
+.Context-menu-entry-icon {
+    width: 30px;
+    text-align: center;
+}
+
+.Context-menu-entry-opener:not([class^="fancy-icon-"] ):not([class*=" fancy-icon-"] ):after {
+    content: " ";
+}
+
+.Context-menu-separator {
+    padding: 0 5px;
+}
+
+.Context-menu-entry-shortcut {
+    padding: 0 0 0 20px;
+}
+
+.Context-menu-sub.left {
+    right: 100%;
+}
+
+.Context-menu-sub:not(.left) {
+    left: 100%;
+}
+
+.Context-menu:not(.open) > .Context-menu-sub {
+    display: none;
+}
+
+.Context-menu.disabled > .Context-menu-entry{
+    cursor: not-allowed;
+}
+
+.Context-menu.disabled > .Context-menu-entry,
+.Context-menu-entry:not(:hover) .Context-menu-entry-shortcut {
+    color: #808080;
+}
+
+.Context-menu:not(.disabled) > .Context-menu-entry:hover {
+    background: rgba(255, 255, 255, .1);
+}
+
+.Context-menu-separator > div {
+    height: 1px;
+    background: #cecece;
+}
