@@ -115,7 +115,8 @@ export default class Core extends Array {
     }
     remove() {
         this.forEach(element => {
-            element.parentNode.removeChild(element);
+            if (element.parentNode != null)
+                element.parentNode.removeChild(element);
         });
     }
     on(name, callback) {

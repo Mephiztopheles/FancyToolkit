@@ -5,6 +5,7 @@ export class AbstractTableModel {
     constructor(items, sorter, rowFilter) {
         this.observers = [];
         this.dirtyRows = [];
+        this.selectedItems = [];
         if (items != null)
             this.setItems(items);
         if (rowFilter != null)
@@ -52,6 +53,39 @@ export class AbstractTableModel {
     get(index) {
         return this.items[index];
     }
+    getMultiSelection() {
+        return this.multiSelection;
+    }
+    setMultiSelection(value) {
+        this.multiSelection = value;
+    }
+    setSelected(selected) {
+        this.selectedItems.length = 0;
+        this.selectedItems.push(selected);
+    }
+    toggleSelection(dragging, item) {
+        if (typeof item == "number") {
+            item = this.get(item);
+        }
+        let index = this.selectedItems.indexOf(item);
+        if (!this.multiSelection || (this.multiSelection && !dragging)) {
+            this.selectedItems.length = 0;
+            index = -1;
+        }
+        if (index != -1)
+            this.selectedItems.splice(index, 1);
+        else
+            this.selectedItems.push(item);
+    }
+    addSelectedItem(item) {
+        if (this.selectedItems.indexOf(item) == -1)
+            this.selectedItems.push(item);
+    }
+    removeSelectedItem(item) {
+        let index = this.selectedItems.indexOf(item);
+        if (index != -1)
+            this.selectedItems.splice(index, 1);
+    }
     getIndex(entry) {
         return this.items.indexOf(entry);
     }
@@ -82,6 +116,11 @@ export class AbstractTableModel {
         const elements = splice.call(this.items, start, deleteCount);
         for (start; start < this.items.length; start++)
             this.setDirty.call(this, true, this.items[start]);
+        elements.forEach(item => {
+            let index = this.selectedItems.indexOf(item);
+            if (index != -1)
+                this.selectedItems.splice(index, 1);
+        });
         this.dataChanged();
         return elements;
     }
@@ -108,6 +147,11 @@ export class AbstractTableModel {
     }
     setItems(items) {
         this.items = items;
+    }
+    isSelected(item) {
+        if (typeof item == "number")
+            item = this.get(item);
+        return this.selectedItems.indexOf(item) != -1;
     }
 }
 //# sourceMappingURL=AbstractTableModel.js.map

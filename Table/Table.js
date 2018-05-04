@@ -75,12 +75,38 @@ export default class Table extends Core {
             Table.addClass(cell, this.renderer.getCellClass(cellIndex));
             row.appendChild(cell);
         }
+        row.addEventListener("click", event => {
+            this.handleRowClick(event, entry);
+        });
+        row.addEventListener("mousedown", event => {
+            this.dragging = true;
+        });
+        row.addEventListener("mouseup", event => {
+            this.dragging = false;
+        });
+        row.addEventListener("mouseenter", event => {
+            if (this.dragging)
+                this.handleRowClick(event, entry);
+        });
         return row;
+    }
+    handleRowClick(event, entry) {
+        if (event.button == 0) {
+            this.model.toggleSelection(event.ctrlKey || this.dragging, entry);
+            this.rows.forEach((node, item) => {
+                if (this.model.isSelected(item))
+                    node.classList.add("selected");
+                else
+                    node.classList.remove("selected");
+            });
+        }
     }
     paintRow(row, rowIndex, cells, index) {
         let cellIndex = 0;
         for (cellIndex; cellIndex < cells; cellIndex++)
             row.children[cellIndex].innerHTML = this.model.getValueAt(rowIndex, cellIndex, index);
+        if (this.model.isSelected(rowIndex))
+            row.classList.add("selected");
     }
     paintHeader() {
         Table.clearElement(this.header);

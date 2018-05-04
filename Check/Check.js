@@ -45,7 +45,7 @@ export default class Check extends Core {
     }
     uncheck() {
         this[0].checked = false;
-        Check.removeClass(this.checkBox, (i, className) => (className.match(/(^|\s)checked-\S+/g) || []).join(' '));
+        Check.removeClass(this.checkBox, (i, className) => (className.match(/(^|\s)fancy-icon-checked-\S+/g) || []).join(' '));
     }
     toggle() {
         if (this.isChecked())

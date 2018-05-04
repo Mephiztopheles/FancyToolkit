@@ -19,8 +19,10 @@ export abstract class AbstractTableModel<T> {
     protected rowSorter:AbstractRowSorter<T>;
     protected rowFilter:RowFilter<T>;
     protected items:Array<T>;
+    protected selectedItems:Array<T> = [];
+    protected multiSelection:boolean;
 
-    constructor( items:Array<T>, sorter?:AbstractRowSorter<T>, rowFilter?:RowFilter<T> ) {
+    public constructor( items:Array<T>, sorter?:AbstractRowSorter<T>, rowFilter?:RowFilter<T> ) {
 
         if ( items != null )
             this.setItems( items );
@@ -90,6 +92,54 @@ export abstract class AbstractTableModel<T> {
         return this.items[ index ];
     }
 
+    public getMultiSelection():boolean {
+        return this.multiSelection;
+    }
+
+    public setMultiSelection( value:boolean ) {
+        this.multiSelection = value;
+    }
+
+    public setSelected( selected:T ) {
+
+        this.selectedItems.length = 0;
+        this.selectedItems.push( selected );
+    }
+
+    public toggleSelection( dragging:boolean, item:T | number ) {
+
+
+        if ( typeof item == "number" ) {
+            item = this.get( item );
+        }
+
+
+        let index = this.selectedItems.indexOf( item );
+        if ( !this.multiSelection || ( this.multiSelection && !dragging ) ) {
+
+            this.selectedItems.length = 0;
+            index = -1;
+        }
+
+        if ( index != -1 )
+            this.selectedItems.splice( index, 1 );
+        else
+            this.selectedItems.push( item );
+    }
+
+    protected addSelectedItem( item:T ) {
+
+        if ( this.selectedItems.indexOf( item ) == -1 )
+            this.selectedItems.push( item );
+    }
+
+    protected removeSelectedItem( item:T ) {
+
+        let index = this.selectedItems.indexOf( item );
+        if ( index != -1 )
+            this.selectedItems.splice( index, 1 );
+    }
+
     public getIndex( entry:T ):number {
         return this.items.indexOf( entry );
     }
@@ -107,9 +157,9 @@ export abstract class AbstractTableModel<T> {
     public add( ...elements:T[] ):number {
         return this.addAll( elements );
     }
-    
-    public addAll( elements:Array<T> ) : number {
-    
+
+    public addAll( elements:Array<T> ):number {
+
         const length = push.apply( this.items, elements );
 
         let args = [ true ];
@@ -135,8 +185,14 @@ export abstract class AbstractTableModel<T> {
         const elements = splice.call( this.items, start, deleteCount );
 
         for ( start; start < this.items.length; start++ )
-            this.setDirty.call( this,  true, this.items[ start ]  );
+            this.setDirty.call( this, true, this.items[ start ] );
 
+        elements.forEach( item => {
+
+            let index = this.selectedItems.indexOf( item );
+            if ( index != -1 )
+                this.selectedItems.splice( index, 1 );
+        } );
 
         this.dataChanged();
 
@@ -176,5 +232,13 @@ export abstract class AbstractTableModel<T> {
 
     private setItems( items:Array<T> ) {
         this.items = items;
+    }
+
+    public isSelected( item:T | number ) {
+
+        if ( typeof item == "number" )
+            item = this.get( item );
+
+        return this.selectedItems.indexOf( item ) != -1;
     }
 }

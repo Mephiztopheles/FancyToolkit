@@ -63,15 +63,6 @@ class TestTableRenderer extends AbstractTableRenderer {
     }
     interceptRow(htmlDivElement, index) {
         htmlDivElement.style.cursor = "pointer";
-        htmlDivElement.addEventListener("click", event => {
-            if (event.which == 1) {
-                if (htmlDivElement.parentNode != null)
-                    htmlDivElement.parentNode.childNodes.forEach(node => {
-                        node.classList.remove("selected");
-                    });
-                htmlDivElement.classList.add("selected");
-            }
-        });
         return htmlDivElement;
     }
 }
@@ -122,6 +113,7 @@ const model = new TestModel([
     projekt1,
     new Projekt(2, "Mars")
 ], new ProjektRowSorter(), filter);
+model.setMultiSelection(true);
 console.log(model);
 const renderer = new TestTableRenderer();
 $(() => {
@@ -140,7 +132,7 @@ $(() => {
     setTimeout(() => {
         projekt1.name = "Douglas";
         model.setDirty(true, projekt1);
-        for (let i = 3; i < 10000; i++)
+        for (let i = 3; i < 100; i++)
             model.add(new Projekt(i, makeid()));
         model.sort();
         setTimeout(() => {

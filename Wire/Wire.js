@@ -3,38 +3,39 @@ export class Wire {
         this.converter = converter;
     }
     transport(object) {
-        console.log(object);
-        console.log(this.converter.decode(object));
+        if (Object.getPrototypeOf(object) == Object.prototype)
+            console.log(this.converter.encode(object));
+        else
+            console.log(this.converter.decode(object));
     }
 }
-class AbstractJsonConverter {
-}
-class ProjektConverter extends AbstractJsonConverter {
-    enode(data) {
-        return new Projekt(data.name, data.id);
-    }
+export class AbstractJsonConverter {
     decode(data) {
-        return { name: data.name, id: data.id };
+        return this.convert(data);
+    }
+    convert(entry, data) {
+        const props = glue[entry.constructor.name];
+        if (props == null)
+            throw new Error(`${entry.constructor.name} is not serializable!`);
+        if (data != undefined) {
+            props.forEach(key => {
+                entry[key] = data[key];
+            });
+            return entry;
+        }
+        else {
+            data = {};
+            props.forEach(key => {
+                data[key] = entry[key];
+            });
+            return data;
+        }
     }
 }
-class Projekt {
-    get id() {
-        return this._id;
-    }
-    set id(value) {
-        this._id = value;
-    }
-    get name() {
-        return this._name;
-    }
-    set name(value) {
-        this._name = value;
-    }
-    constructor(name, id) {
-        this.name = name;
-        this.id = id;
-    }
+const glue = {};
+export function serializable(...proeprties) {
+    return function (constructor) {
+        glue[constructor.name] = proeprties;
+    };
 }
-const w = new Wire(new ProjektConverter());
-w.transport(new Projekt("test", 1));
 //# sourceMappingURL=Wire.js.map

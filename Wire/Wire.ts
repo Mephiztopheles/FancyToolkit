@@ -1,70 +1,60 @@
 export class Wire<I, O> {
 
 
-    constructor(private converter: AbstractJsonConverter<I, O>) {
+    constructor( private converter:AbstractJsonConverter<I, O> ) {
 
     }
 
-    transport(object: O) {
-        console.log(object);
-        console.log(this.converter.decode(object));
-    }
-}
+    transport( object:O | I ) {
 
-
-abstract class AbstractJsonConverter<I, O> {
-
-    abstract enode(data: I): O;
-
-    abstract decode(data: O): I;
-}
-
-class ProjektConverter extends AbstractJsonConverter<ProjektJson, Projekt> {
-
-    enode(data: ProjektJson): Projekt {
-        return new Projekt(data.name, data.id);
-    }
-
-    decode(data: Projekt): ProjektJson {
-        return {name: data.name, id: data.id}
+        if ( Object.getPrototypeOf( object ) == Object.prototype )
+            console.log( this.converter.encode( <I>object ) );
+        else
+            console.log( this.converter.decode( <O>object ) );
     }
 }
 
 
-class Projekt {
+export abstract class AbstractJsonConverter<I, O> {
 
-    private _name: string;
-    private _id: number;
+    abstract encode( data:I ):O;
 
-    get id(): number {
-        return this._id;
+    public decode( data:O ):I {
+        return <I> this.convert( data );
     }
 
-    set id(value: number) {
-        this._id = value;
-    }
+    protected convert( entry:O, data?:I ):I | O {
 
-    get name(): string {
-        return this._name;
-    }
+        const props = glue[ entry.constructor.name ];
+        if ( props == null )
+            throw new Error( `${entry.constructor.name} is not serializable!` );
+        if ( data != undefined ) {
 
-    set name(value: string) {
-        this._name = value;
-    }
 
-    constructor(name: string, id: number) {
-        this.name = name;
-        this.id = id;
+            props.forEach( key => {
+                entry[ key ] = data[ key ];
+            } );
+
+            return entry;
+
+        } else {
+
+            data = <I>{};
+
+            props.forEach( key => {
+                data[ key ] = entry[ key ];
+            } );
+            return data;
+        }
     }
 }
 
+const glue = {};
 
-interface ProjektJson {
 
-    id: number
-    name?: string
+export function serializable( ...proeprties:string[] ) {
+
+    return function ( constructor:Function ) {
+        glue[ constructor.name ] = proeprties;
+    };
 }
-
-const w = new Wire(new ProjektConverter());
-
-w.transport(new Projekt("test", 1));

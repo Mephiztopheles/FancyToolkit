@@ -1,4 +1,4 @@
-import Core from "../Core/Core.js";
+import Core from "../../Core/Core.js";
 const core = new Core("#test > div");
 core.onRemove(index => {
     console.log(index);

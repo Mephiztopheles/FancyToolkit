@@ -2,6 +2,10 @@
 
 .Context-menu {
     position: relative;
+    -webkit-user-select: none; /* Chrome all / Safari all */
+    -moz-user-select: none; /* Firefox all */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Likely future */
 }
 
 .Context-body {
@@ -26,12 +30,17 @@
     cursor: pointer;
     display: flex;
     white-space: nowrap;
+    min-height: 30px;
 }
 
 .Context-menu-entry-opener,
 .Context-menu-entry-icon {
     width: 30px;
     text-align: center;
+}
+
+.Context-menu-entry-name {
+    flex: 1;
 }
 
 .Context-menu-entry-opener:not([class^="fancy-icon-"] ):not([class*=" fancy-icon-"] ):after {
@@ -58,7 +67,7 @@
     display: none;
 }
 
-.Context-menu.disabled > .Context-menu-entry{
+.Context-menu.disabled > .Context-menu-entry {
     cursor: not-allowed;
 }
 

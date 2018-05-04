@@ -169,7 +169,9 @@ export default class Core<T extends HTMLElement> extends Array<T> {
 
     remove() {
         this.forEach( element => {
-            element.parentNode.removeChild( element );
+
+            if ( element.parentNode != null )
+                element.parentNode.removeChild( element );
         } );
     }
 
@@ -323,6 +325,6 @@ export default class Core<T extends HTMLElement> extends Array<T> {
     }
 
     width():number {
-        return $(this[0]).width();
+        return $( this[ 0 ] ).width();
     }
 }

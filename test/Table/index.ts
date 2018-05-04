@@ -80,18 +80,6 @@ class TestTableRenderer extends AbstractTableRenderer {
 
     interceptRow( htmlDivElement:HTMLElement, index:number ):HTMLElement {
         htmlDivElement.style.cursor = "pointer";
-        htmlDivElement.addEventListener( "click", event => {
-
-            if ( event.which == 1 ) {
-
-                if ( htmlDivElement.parentNode != null )
-                    htmlDivElement.parentNode.childNodes.forEach( node => {
-                        ( <HTMLElement>node ).classList.remove( "selected" );
-                    } );
-
-                htmlDivElement.classList.add( "selected" );
-            }
-        } );
         return htmlDivElement;
     }
 }
@@ -99,6 +87,7 @@ class TestTableRenderer extends AbstractTableRenderer {
 class Filter implements RowFilter<Projekt> {
 
     include( entry:Projekt, index:number ):boolean {
+
         const value = <string>input.val();
 
         if ( value == "" )
@@ -167,6 +156,8 @@ const model = new TestModel( [
     new Projekt( 2, "Mars" )
 ], new ProjektRowSorter(), filter );
 
+model.setMultiSelection( true );
+
 console.log( model );
 
 
@@ -174,15 +165,15 @@ const renderer = new TestTableRenderer();
 
 $( () => {
 
-	function makeid() {
-	  var text = "";
-	  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	
-	  for (var i = 0; i < 5; i++)
-	    text += possible.charAt(Math.floor(Math.random() * possible.length));
-	
-	  return text;
-	}
+    function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for ( var i = 0; i < 5; i++ )
+            text += possible.charAt( Math.floor( Math.random() * possible.length ) );
+
+        return text;
+    }
 
 
     const table = new TestTable( ".table", model, renderer );
@@ -196,9 +187,9 @@ $( () => {
 
         projekt1.name = "Douglas";
         model.setDirty( true, projekt1 );
-        
-        for(let i = 3; i<10000; i++)
-        	model.add(new Projekt(i, makeid()));
+
+        for ( let i = 3; i < 100; i++ )
+            model.add( new Projekt( i, makeid() ) );
 
         model.sort();
 

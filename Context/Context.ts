@@ -1,18 +1,28 @@
 import Core from "../Core/Core.js";
 
+interface ContextOptions {
+    onSelection?:boolean
+}
+
 export class Context extends Core<HTMLElement> {
 
     private menu:CoreMenuItem;
+    private _onShow:( event:MouseEvent ) => boolean;
 
     private static MENU:CoreMenuItem;
     static CLASS_NAME = "Context-menu";
 
-    constructor( element:string | HTMLElement ) {
+    constructor( element:string | HTMLElement, private options?:ContextOptions ) {
 
         super( element );
 
         if ( this.length != 1 )
             throw new Error( "Context-Menu must be applied to one element" );
+
+        if ( options == null )
+            this.options = {
+                onSelection: true
+            };
 
         this.on( "contextmenu", event => this.handle( <MouseEvent>event ) );
         this.menu = new CoreMenuItem();
@@ -24,20 +34,68 @@ export class Context extends Core<HTMLElement> {
 
     private handle( event:MouseEvent ) {
 
-        event.preventDefault();
 
         Context.close();
 
-        if ( this.menu == null )
+        let show = true;
+
+        if ( !this.options.onSelection && Context.getSelectedText() )
+            show = false;
+
+        if ( this.menu == null || !show )
             return;
 
         Context.MENU = this.menu;
-        const menu = new Core( this.menu.build() );
-        console.log( window.innerWidth - menu.width(), event.pageX );
 
+        const menu = new Core( this.menu.build() );
+        if ( this._onShow != null ) {
+
+            if ( this._onShow( event ) )
+                this.show( event, menu );
+        } else {
+
+            this.show( event, menu );
+        }
+    }
+
+    private show( event:MouseEvent, menu:Core<HTMLElement> ) {
+
+        event.preventDefault();
         this[ 0 ].parentNode.appendChild( menu[ 0 ] );
-        menu.css( "left", Math.min( event.pageX, window.innerWidth - menu.width() - 5 ) );
-        menu.css( "top", event.pageY );
+        menu.css( "left", Math.min( event.pageX + 2, window.innerWidth - menu.width() - 5 ) );
+        menu.css( "top", event.pageY + 2 );
+    }
+
+    public static getSelectedText() {
+
+        let text = "";
+        let activeEl:HTMLElement = <HTMLInputElement>document.activeElement;
+        let activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
+        if (
+            ( activeElTagName == "textarea" ) || ( activeElTagName == "input" &&
+            /^(?:text|search|password|tel|url)$/i.test( ( <HTMLInputElement>activeEl ).type ) ) &&
+            ( typeof ( <HTMLInputElement>activeEl ).selectionStart == "number" )
+        ) {
+            text = ( <HTMLInputElement>activeEl ).value.slice( ( <HTMLInputElement>activeEl ).selectionStart, ( <HTMLInputElement>activeEl ).selectionEnd );
+        } else if ( window.getSelection ) {
+
+            const selection = window.getSelection();
+
+            const menu = <HTMLElement>document.querySelector( `#${this.CLASS_NAME}` );
+
+            text = selection.toString();
+            if ( menu != null && selection.containsNode( menu.firstChild, true ) ) {
+
+                let parentText = ( <HTMLElement>menu.parentNode ).innerText;
+                let start = text.indexOf( parentText );
+                let end = start + parentText.length - menu.innerText.length;
+
+
+                const front = text.substr( 0, end );
+                text = front + text.substr( end ).replace( menu.innerText, "" );
+            }
+        }
+        return text;
     }
 
     static close() {
@@ -46,6 +104,14 @@ export class Context extends Core<HTMLElement> {
             Context.MENU.destroy();
 
         Context.MENU = null;
+    }
+
+    set onShow( value:( event:MouseEvent ) => any ) {
+        this._onShow = value;
+    }
+
+    get onShow():( event:MouseEvent ) => any {
+        return this._onShow;
     }
 }
 
@@ -57,10 +123,20 @@ export class MenuItem {
     private disabled:boolean;
 
 
-    constructor( private name:string, private icon:string, private command:( event:Event ) => void, private shortcut?:string ) {
+    constructor( private name:string, private icon?:string, private command?:( event:Event ) => void, private shortcut?:string ) {
 
         if ( name == null && Object.getPrototypeOf( this ) == MenuItem )
             throw new Error( "Name cannot be null!" );
+    }
+
+
+    public setName( value:string ) {
+
+        this.name = value;
+
+        let children = this.entry.children;
+        if ( children.length > 1 )
+            children[ 1 ].innerText = this.name;
     }
 
     public add( item:MenuItem ) {
@@ -112,7 +188,7 @@ export class MenuItem {
 
     public build():HTMLElement {
 
-        this.element = new Core( "<div>" ).addClass( "Context-menu" );
+        this.element = new Core( "<div>" ).addClass( Context.CLASS_NAME );
 
 
         $( this.element[ 0 ] ).hover( event => {
@@ -129,9 +205,9 @@ export class MenuItem {
         name.text( this.name );
         const icon = new Core( "<div/>" );
 
-        this.entry.addClass( "Context-menu-entry" );
-        name.addClass( "Context-menu-entry-name" );
-        icon.addClass( "Context-menu-entry-icon" ).addClass( this.icon );
+        this.entry.addClass( `${Context.CLASS_NAME}-entry` );
+        name.addClass( `${Context.CLASS_NAME}-entry-name` );
+        icon.addClass( `${Context.CLASS_NAME}-entry-icon` ).addClass( this.icon );
 
 
         const opener = new Core( "<div/>" ).addClass( "Context-menu-entry-opener" );
@@ -178,7 +254,6 @@ export class MenuItem {
 
         return this.element[ 0 ];
     }
-
 
     private static hover( target:JQuery ) {
 
@@ -238,6 +313,7 @@ class CoreMenuItem extends MenuItem {
     build():HTMLElement {
 
         this.element = new Core( "<div/>" ).addClass( "Context-body Context-menu" );
+        this.element[ 0 ].id = Context.CLASS_NAME;
 
         this.items.forEach( it => this.element.append( it.build() ) );
 
@@ -246,6 +322,11 @@ class CoreMenuItem extends MenuItem {
 }
 
 
-window.addEventListener( "click", () => {
-    Context.close();
+window.addEventListener( "click", ( event ) => {
+
+    /*
+     * click on menuItem is prevented, but a click is only mousedown and mouseup on same element
+     */
+    if ( !jQuery.contains( $( `#${Context.CLASS_NAME}` )[ 0 ], <Element>event.target ) )
+        Context.close();
 } );

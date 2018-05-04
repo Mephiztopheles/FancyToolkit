@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Context</title>
-    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-    <link rel="stylesheet" href="../../Context/context.css">
-    <style>
-        body {
-            font-family: "Comic Sans MS",fantasy;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-        }
 
-        #container {
+    <link rel="stylesheet" href="../../Context/context.css">
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../theme.js"></script>
+    <style>
+
+        .container {
             background: #cecece;
             padding: 10px;
+            border-bottom: 1px solid;
         }
     </style>
 </head>
 <body>
 
 
-<div id="container">Text</div>
+<div>
+    <div id="container" class="container">Context only without selection :(</div>
+    <div id="second" class="container">Context only with selection :) Original context menu is prevented</div>
+</div>
+
+<div>End</div>
+
 
 <script src="index.js" type="module"></script>
 </body>
