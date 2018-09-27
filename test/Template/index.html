@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Table</title>
+    <title>Template</title>
 
     <link rel="stylesheet" href="../../Table/table.css">
     <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
@@ -28,10 +28,8 @@
 </head>
 <body>
 
-<input type="search" placeholder="Search...">
-<button>Neu</button>
+<div fancy-controller="TestController">{{name}} - {{$id}}</div>
 
-<table class="table"></table>
 <script src="index.js" type="module"></script>
 </body>
 </html>

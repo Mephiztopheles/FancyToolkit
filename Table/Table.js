@@ -39,7 +39,8 @@ export default class Table extends Core {
         const cells = this.model.getCellCount();
         this.rows.forEach((value, key) => {
             if (this.model.getIndex(key) == -1) {
-                this.body.removeChild(value);
+				if(this.body.contains(value))
+					this.body.removeChild(value);
                 this.rows.delete(key);
             }
         });

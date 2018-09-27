@@ -72,7 +72,8 @@ export default abstract class Table<T extends Object> extends Core<HTMLElement> 
 
             if ( this.model.getIndex( key ) == -1 ) {
 
-                this.body.removeChild( value );
+				if(this.body.contains(value))
+					this.body.removeChild( value );
                 this.rows.delete( key );
             }
         } );

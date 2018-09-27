@@ -1,0 +1,26 @@
+{
+  "name": "fancytoolkit",
+  "version": "1.0.0",
+  "description": "toolkit",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mephiztopheles/FancyToolkit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mephiztopheles/FancyToolkit/issues"
+  },
+  "homepage": "https://github.com/Mephiztopheles/FancyToolkit#readme",
+  "dependencies": {
+    "@types/jquery": "^3.3.1",
+    "jquery": "^3.3.1"
+  }
+}

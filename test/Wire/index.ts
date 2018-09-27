@@ -8,7 +8,7 @@ class ProjectConverter extends AbstractJsonConverter<ProjectJson, Project> {
 }
 
 
-@serializable( "name" )
+@serializable( "name", "id" )
 class Project {
 
     private _name:string;
