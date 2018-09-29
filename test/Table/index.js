@@ -132,7 +132,7 @@ $(() => {
     setTimeout(() => {
         projekt1.name = "Douglas";
         model.setDirty(true, projekt1);
-        for (let i = 2; i < 100; i++)
+        for (let i = 3; i < 100; i++)
             model.add(new Projekt(i, makeid()));
         model.sort();
         setTimeout(() => {

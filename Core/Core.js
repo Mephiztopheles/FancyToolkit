@@ -1,16 +1,12 @@
-var class2type = {},
-	toString   = class2type.toString;
-"Boolean Number String Function Array Date RegExp Object Error".split( " " ).forEach( function ( name ) {
-	class2type[ "[object " + name + "]" ] = name.toLowerCase();
-} );
-
-function getType( obj ) {
-	if ( obj === null )
-		return obj + "";
-
-	return typeof obj === "object" || typeof obj === "function" ? class2type[ toString.call( obj ) ] || "object" : typeof obj;
+var class2type = {}, toString = class2type.toString;
+"Boolean Number String Function Array Date RegExp Object Error".split(" ").forEach(function (name) {
+    class2type["[object " + name + "]"] = name.toLowerCase();
+});
+function getType(obj) {
+    if (obj === null)
+        return obj + "";
+    return typeof obj === "object" || typeof obj === "function" ? class2type[toString.call(obj)] || "object" : typeof obj;
 }
-
 function getClass(elem) {
     return elem.getAttribute && elem.getAttribute("class") || "";
 }
@@ -28,37 +24,30 @@ function classesToArray(value) {
     }
     return [];
 }
-function copyObject( obj, depth ) {
-	
-	depth = depth || 0;
-	if ( depth < 10 /* max depth */ ) {
-		
-		if ( getType( obj ) === "object" ) {
-			
-			var deepCopy = {};
-			var props    = Object.getOwnPropertyNames( obj );
-			
-			props.forEach( function ( it ) {
-				
-				if ( getType( obj[ it ] ) === "object" ) {
-					
-					deepCopy[ it ] = copyObject( obj[ it ], depth + 1 );
-				} else if ( getType( obj[ it ] ) === "array" ) {
-					
-					deepCopy[ it ] = [];
-					obj[ it ].forEach( function ( x ) {
-						deepCopy[ it ].push( copyObject( x, depth + 1 ) );
-					} );
-					
-				} else {
-					Object.defineProperty( deepCopy, it, Object.getOwnPropertyDescriptor( obj, it ) );
-				}
-			} );
-			return deepCopy;
-		}
-	}
-	
-	return Core.copy( obj );
+function copyObject(obj, depth) {
+    depth = depth || 0;
+    if (depth < 10 /* max depth */) {
+        if (getType(obj) === "object") {
+            var deepCopy = {};
+            var props = Object.getOwnPropertyNames(obj);
+            props.forEach(function (it) {
+                if (getType(obj[it]) === "object") {
+                    deepCopy[it] = copyObject(obj[it], depth + 1);
+                }
+                else if (getType(obj[it]) === "array") {
+                    deepCopy[it] = [];
+                    obj[it].forEach(function (x) {
+                        deepCopy[it].push(copyObject(x, depth + 1));
+                    });
+                }
+                else {
+                    Object.defineProperty(deepCopy, it, Object.getOwnPropertyDescriptor(obj, it));
+                }
+            });
+            return deepCopy;
+        }
+    }
+    return Core.copy(obj);
 }
 export default class Core extends Array {
     constructor(element) {
@@ -68,13 +57,13 @@ export default class Core extends Array {
     get children() {
         return new Core(this[0].children);
     }
-	applySettings(settings, defaults) {
-		this.settings = {};
-		for(let i in defaults)
-			this.settings[i] = defaults[i];
-		for(let i in settings)
-			this.settings[i] = settings[i];
-	}
+    applySettings(settings, defaults) {
+        this.settings = {};
+        for (let i in defaults)
+            this.settings[i] = defaults[i];
+        for (let i in settings)
+            this.settings[i] = defaults[i];
+    }
     init(element) {
         if (element instanceof HTMLElement) {
             this.push(element);
@@ -197,40 +186,32 @@ export default class Core extends Array {
         }
         return this;
     }
-	static equals( object1, object2 ) {
-		
-        if ( typeof object1 != typeof object2 ) 
+    static equals(object1, object2) {
+        if (typeof object1 != typeof object2)
             return false;
-        
         var propName;
-        if ( getType( object1 ) === "array" || getType( object1 ) === "object" ) {
-			
-            if ( Object.keys( object1 ).length !== Object.keys( object2 ).length ) 
+        if (Fancy.getType(object1) === "array" || Fancy.getType(object1) === "object") {
+            if (Object.keys(object1).length !== Object.keys(object2).length)
                 return false;
-            
-            for ( propName in object1 )
-                if ( object1.hasOwnProperty( propName ) )
-                    if ( typeof object1[ propName ] != typeof object2[ propName ] )
+            for (propName in object1)
+                if (object1.hasOwnProperty(propName))
+                    if (typeof object1[propName] != typeof object2[propName])
                         return false;
-                    
-            for ( propName in object2 ) {
-				
-                if ( object2.hasOwnProperty( propName ) ) {
-					
-                    if ( typeof object1[ propName ] != typeof object2[ propName ] ) 
+            for (propName in object2) {
+                if (object2.hasOwnProperty(propName)) {
+                    if (typeof object1[propName] != typeof object2[propName])
                         return false;
-                    
-                    if ( (getType( object1[ propName ] ) === "array" && getType( object2[ propName ] ) === "array") || (getType( object1[ propName ] ) === "object" && getType( object2[ propName ] ) === "object") ) {
-                        if ( !Core.equals( object1[ propName ], object2[ propName ] ) ) 
+                    if ((Fancy.getType(object1[propName]) === "array" && Fancy.getType(object2[propName]) === "array") || (Fancy.getType(object1[propName]) === "object" && Fancy.getType(object2[propName]) === "object")) {
+                        if (!Fancy.equals(object1[propName], object2[propName]))
                             return false;
-                        
-                    } else if ( object1[ propName ] != object2[ propName ] ) {
+                    }
+                    else if (object1[propName] != object2[propName]) {
                         return false;
                     }
                 }
             }
-        } else if ( object1 != object2 ) {
-			
+        }
+        else if (object1 != object2) {
             return false;
         }
         return true;
@@ -323,35 +304,35 @@ export default class Core extends Array {
     width() {
         return $(this[0]).width();
     }
-	
-	static copy( object, copyProperties ) {
-        if ( object === undefined ) {
+    static copy(object, copyProperties) {
+        if (object === undefined) {
             return undefined;
-        } else if ( object === null ) {
+        }
+        else if (object === null) {
             return null;
-        } else if ( copyProperties ) {
-
-            if ( getType( object ) === "object" ) {
-                return copyObject( object );
-            } else if ( getType( object ) === "array" ) {
-                var list = [];
-                object.forEach( function ( it, i ) {
-                    list[ i ] = copyObject( it );
-                } );
-                return list;
-            } else {
-                return JSON.parse( JSON.stringify( object ) );
+        }
+        else if (copyProperties) {
+            if (getType(object) === "object") {
+                return copyObject(object);
             }
-
-        } else {
-            return JSON.parse( JSON.stringify( object ) );
+            else if (getType(object) === "array") {
+                var list = [];
+                object.forEach(function (it, i) {
+                    list[i] = copyObject(it);
+                });
+                return list;
+            }
+            else {
+                return JSON.parse(JSON.stringify(object));
+            }
+        }
+        else {
+            return JSON.parse(JSON.stringify(object));
         }
     }
-	
-	static getType(object){
-		return getType(object);
-	}
-	
-	static undefined( v ) {return v === undefined || v === null;}
+    static getType(object) {
+        return getType(object);
+    }
+    static undefined(v) { return v === undefined || v === null; }
 }
 //# sourceMappingURL=Core.js.map
