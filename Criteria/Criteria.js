@@ -51,7 +51,7 @@ export class Criteria {
 
         try {
 
-            const list = [],
+            let list = [],
                 sortedArray = this.array;
 
             if ( this.query.sort )
