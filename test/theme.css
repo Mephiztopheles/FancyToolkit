@@ -22,13 +22,10 @@ html {
 }
 
 body {
-    position: fixed;
-    top: 0;
-    bottom: 60px;
-    left: 0;
     right: 0;
     overflow: auto;
     font-family: "Comic Sans MS", fantasy;
+    padding-bottom:  80px;
 }
 
 * {
@@ -41,6 +38,12 @@ button,
 input {
     line-height: 27px;
     padding: 0 5px;
+    border: 1px solid;
+}
+
+label span {
+    line-height: 29px;
+    height: 29px;
 }
 
 input[type="search"] {

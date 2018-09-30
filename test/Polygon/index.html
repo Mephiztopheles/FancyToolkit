@@ -3,37 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <title>Polygon</title>
-
-    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
     <script src="../theme.js"></script>
-	<style>
-		#canvas {
-			height: 200px;
-			position: absolute;
-			top: 25%;
-			left: 50%;
-			margin: 0 -50% 0 0;
-			transform: translate(-50%, -50%);
-		}
-		#canvas-2 {
-			height: 200px;
-			position: absolute;
-			top: 75%;
-			left: 50%;
-			margin: 0 -50% 0 0;
-			transform: translate(-50%, -50%);
-		}
-	</style>
+    <style>
+
+        body {
+            display: flex;
+            justify-content: center;
+        }
+
+        #center {
+            padding-bottom: 10px;
+        }
+
+        #center:not(.ng-scope) {
+            display: none;
+        }
+
+        .polygon-values label {
+            display: block;
+        }
+
+        .polygon-values label:after {
+            content: "";
+            clear: both;
+            width: 0;
+            height: 0;
+        }
+
+        .polygon-values input {
+            float: right;
+        }
+
+        .values  .values-container {
+            transition: height 0.5s;
+            overflow: hidden;
+        }
+
+        .values h3 {
+            cursor: pointer;
+        }
+
+        .values .hidden {
+            height: 0;
+        }
+    </style>
 </head>
 <body>
 
-<canvas id="canvas">
-Your browser does not support the canvas element.
-</canvas>
+<div id="center" ng-controller="AppController">
+    <canvas id="canvas">
+        Your browser does not support the canvas element.
+    </canvas>
 
-<canvas id="canvas-2">
-Your browser does not support the canvas element.
-</canvas>
+    <canvas id="canvas-2">
+        Your browser does not support the canvas element.
+    </canvas>
+
+    <div>
+        <div class="polygon-values values">
+            <h3 ng-click="polygonHidden = !polygonHidden">Polygon <span>{{polygonHidden ? "&#x25B2;" : "&#x25BC;"}}</span></h3>
+            <div class="values-container" ng-class="{'hidden':polygonHidden}">
+                <label>
+                    <span>count of edges</span>
+                    <input type="number" min="3" max="20" ng-change="repaint()" ng-model="polygon.edgesCount">
+                </label>
+                <label>
+                    <span>windings</span>
+                    <input type="number" min="1" ng-change="repaint()" ng-model="polygon.winding">
+                </label>
+                <label>
+                    <span>rotation</span>
+                    <input type="number" ng-change="repaint()" ng-model="polygon.rotation">
+                </label>
+                <label>
+                    <span>background-color</span>
+                    <input type="text" ng-change="repaint()" ng-model="polygon.style.fillStyle">
+                </label>
+                <label>
+                    <span>lineWidth</span>
+                    <input type="number" min="0" ng-change="repaint()" ng-model="polygon.style.lineWidth">
+                </label>
+                <label>
+                    <span>paint indices</span>
+                    <input type="checkbox" ng-model="paintAllIndices">
+                </label>
+            </div>
+        </div>
+
+
+        <div class="side-values values">
+            <h3 ng-click="hideAll = !hideAll">Collapse all <span>{{hideAll ? "&#x25B2;" : "&#x25BC;"}}</span></h3>
+            <div class="values-container" ng-repeat="side in polygon.sides">
+                <h3 ng-click="hidden[$index] = !hidden[$index]">Side {{side.index}}  <span>{{hidden[$index] ? "&#x25B2;" : "&#x25BC;"}}</span></h3>
+                <div ng-class="{'hidden':hidden[$index]}">
+
+                    <label>
+                        <span>color</span>
+                        <input type="text" ng-change="repaint()" placeholder="default ({{polygon.style.strokeStyle}})"
+                               ng-model="side.style.strokeStyle">
+                    </label>
+                    <label>
+                        <span>lineWidth</span>
+                        <input type="number" min="0" ng-change="repaint()"
+                               placeholder="default ({{polygon.style.lineWidth}})" ng-model="side.style.lineWidth">
+                    </label>
+                    <label>
+                        <span>paint index</span>
+                        <input type="checkbox" ng-change="repaint()" ng-model="side.style.paintIndex">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <script src="index.js" type="module"></script>
 </body>
