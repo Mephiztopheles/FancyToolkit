@@ -21,6 +21,6 @@
   "homepage": "https://github.com/Mephiztopheles/FancyToolkit#readme",
   "dependencies": {
     "@types/jquery": "^3.3.1",
-    "jquery": "^3.3.1"
+    "jquery": "^3.5.0"
   }
 }
